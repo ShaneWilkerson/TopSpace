@@ -141,6 +141,31 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 ```
 
+## Username Uniqueness
+
+This app reserves usernames in Firestore to ensure they are unique across accounts.
+
+- Collection `users/{uid}` stores per-user profile fields: `username`, `usernameLower`.
+- Collection `usernames/{usernameLower}` maps the lowercase username to `{ uid }`.
+- All claims/changes are done in Firestore transactions.
+
+Suggested Firestore rules additions under `match /databases/{database}/documents`:
+
+```
+match /users/{uid} {
+  allow read: if request.auth != null;
+  allow create, update: if request.auth != null && request.auth.uid == uid;
+}
+
+match /usernames/{usernameLower} {
+  allow read: if true;
+  // Only the authenticated owner can claim a username doc mapping to their uid.
+  allow create, update: if request.auth != null && request.resource.data.uid == request.auth.uid;
+  // Allow releasing (deleting) a username only by the owner
+  allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+}
+```
+
 ## Contributing
 
 1. Fork the repository

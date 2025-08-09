@@ -5,12 +5,24 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged, type User } from 'firebase/auth';
 
 export default function NavBar() {
   const pathname = usePathname();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => setCurrentUser(user));
+    return unsubscribe;
+  }, []);
 
   // Helper function to check if a link is active
   const isActive = (path: string) => pathname === path;
+
+  const authLinkHref = currentUser ? '/profile' : '/login';
+  const authLinkLabel = currentUser ? 'Profile' : 'Login';
 
   return (
     <nav className="bg-gray-900 border-b border-gray-800">
@@ -48,14 +60,14 @@ export default function NavBar() {
             </Link>
             
             <Link 
-              href="/login" 
+              href={authLinkHref}
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/login') 
+                isActive(authLinkHref) 
                   ? 'text-yellow-400 bg-gray-800' 
                   : 'text-gray-300 hover:text-yellow-400 hover:bg-gray-800'
               }`}
             >
-              Login
+              {authLinkLabel}
             </Link>
           </div>
         </div>
