@@ -1,6 +1,8 @@
 // Browse page for TopSpace
 // Shows trending topics and their current consensus Top 5 rankings
 
+import Link from 'next/link';
+
 export default function BrowsePage() {
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
@@ -24,9 +26,11 @@ export default function BrowsePage() {
             <p className="text-gray-400 mb-8">
               Be the first to create a ranking topic and start the conversation!
             </p>
-            <button className="bg-yellow-400 text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-yellow-300 transition-colors">
-              Create New Topic
-            </button>
+            <Link href="/create">
+              <button className="bg-yellow-400 text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-yellow-300 transition-colors">
+                Create New Topic
+              </button>
+            </Link>
           </div>
         </div>
       </div>
