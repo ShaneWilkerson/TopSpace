@@ -1,5 +1,5 @@
 // Create Topic page for TopSpace
-// Allows users to create new ranking topics with up to 5 items
+// Allows users to create new ranking topics with up to 10 items
 
 'use client';
 
@@ -9,10 +9,18 @@ import Link from 'next/link';
 export default function CreateTopicPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [itemCount, setItemCount] = useState(5);
   const [items, setItems] = useState(['', '', '', '', '']);
   const [loading, setLoading] = useState(false);
 
-  // Handle adding/removing items (max 5)
+  // Update items array when item count changes
+  const handleItemCountChange = (count: number) => {
+    setItemCount(count);
+    const newItems = Array(count).fill('').map((_, index) => items[index] || '');
+    setItems(newItems);
+  };
+
+  // Handle adding/removing items (max 10)
   const handleItemChange = (index: number, value: string) => {
     const newItems = [...items];
     newItems[index] = value;
@@ -44,7 +52,8 @@ export default function CreateTopicPage() {
     console.log('Creating topic:', {
       title,
       description,
-      items: validItems
+      items: validItems,
+      itemCount
     });
 
     setLoading(false);
@@ -61,7 +70,7 @@ export default function CreateTopicPage() {
             Create New Topic
           </h1>
           <p className="text-gray-300">
-            Start a new Top 5 ranking and let the community vote
+            Start a new ranking and let the community vote
           </p>
         </div>
 
@@ -98,10 +107,33 @@ export default function CreateTopicPage() {
             />
           </div>
 
+          {/* Number of Items */}
+          <div>
+            <label htmlFor="itemCount" className="block text-sm font-medium text-gray-300 mb-2">
+              Number of Items to Rank *
+            </label>
+            <select
+              id="itemCount"
+              value={itemCount}
+              onChange={(e) => handleItemCountChange(parseInt(e.target.value))}
+              className="w-full px-3 py-2 border border-gray-600 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+            >
+              <option value={5}>5 items</option>
+              <option value={6}>6 items</option>
+              <option value={7}>7 items</option>
+              <option value={8}>8 items</option>
+              <option value={9}>9 items</option>
+              <option value={10}>10 items</option>
+            </select>
+            <p className="mt-1 text-sm text-gray-400">
+              Choose how many items people will rank (5-10)
+            </p>
+          </div>
+
           {/* Ranking Items */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-4">
-              Items to Rank (2-5 items) *
+              Items to Rank (2-{itemCount} items) *
             </label>
             <div className="space-y-3">
               {items.map((item, index) => (
@@ -159,4 +191,4 @@ export default function CreateTopicPage() {
       </div>
     </div>
   );
-} 
+}
