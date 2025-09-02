@@ -5,6 +5,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { auth, db } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export default function CreateTopicPage() {
   const [title, setTitle] = useState('');
@@ -12,6 +15,7 @@ export default function CreateTopicPage() {
   const [itemCount, setItemCount] = useState(5);
   const [items, setItems] = useState(['', '', '', '', '']);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   // Update items array when item count changes
   const handleItemCountChange = (count: number) => {
@@ -46,19 +50,37 @@ export default function CreateTopicPage() {
       return;
     }
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    console.log('Creating topic:', {
-      title,
-      description,
-      items: validItems,
-      itemCount
-    });
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        alert('You must be signed in to create a topic');
+        setLoading(false);
+        return;
+      }
 
-    setLoading(false);
-    // In a real app, we'd redirect to the new topic page
-    alert('Topic created successfully!');
+      // Create topic in Firestore
+      const topicData = {
+        title: title.trim(),
+        description: description.trim(),
+        items: validItems,
+        itemCount,
+        createdBy: user.uid,
+        createdAt: serverTimestamp(),
+        totalVotes: 0
+      };
+
+      const docRef = await addDoc(collection(db, 'topics'), topicData);
+      
+      console.log('Topic created with ID:', docRef.id);
+      
+      // Redirect to the new topic page
+      router.push(`/topic/${docRef.id}`);
+    } catch (error) {
+      console.error('Error creating topic:', error);
+      alert('Failed to create topic. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -110,7 +132,7 @@ export default function CreateTopicPage() {
           {/* Number of Items */}
           <div>
             <label htmlFor="itemCount" className="block text-sm font-medium text-gray-300 mb-2">
-              Number of Items to Rank *
+              Number of Items to Rank
             </label>
             <select
               id="itemCount"
@@ -130,10 +152,10 @@ export default function CreateTopicPage() {
             </p>
           </div>
 
-          {/* Ranking Items */}
+          {/* Suggested Items */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-4">
-              Items to Rank (2-{itemCount} items) *
+              Suggested Items (Optional)
             </label>
             <div className="space-y-3">
               {items.map((item, index) => (
@@ -146,13 +168,13 @@ export default function CreateTopicPage() {
                     value={item}
                     onChange={(e) => handleItemChange(index, e.target.value)}
                     className="flex-1 px-3 py-2 border border-gray-600 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                    placeholder={`Item ${index + 1}`}
+                    placeholder={`Suggested item ${index + 1}`}
                   />
                 </div>
               ))}
             </div>
             <p className="text-sm text-gray-400 mt-2">
-              Enter at least 2 items for people to rank
+              Provide suggestions to get people started. Voters can add their own items too.
             </p>
           </div>
 

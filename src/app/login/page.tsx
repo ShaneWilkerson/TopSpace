@@ -72,7 +72,7 @@ export default function LoginPage() {
       const code = err?.code as string | undefined;
       setErrorMessage(mapAuthErrorToMessage(code ?? '', isSignUp));
     } finally {
-      setLoading(false);
+    setLoading(false);
     }
   };
 
@@ -85,7 +85,7 @@ export default function LoginPage() {
     } catch (err: any) {
       setErrorMessage('Google sign-in failed. Please try again.');
     } finally {
-      setLoading(false);
+    setLoading(false);
     }
   };
 
