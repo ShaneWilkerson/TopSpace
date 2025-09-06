@@ -98,63 +98,64 @@ export default function ProfilePage() {
           <h1 className="text-3xl font-bold text-yellow-400 mb-2">Profile</h1>
         </div>
 
-        <div className="space-y-3">
-          <div className="flex justify-between">
+        <div className="space-y-4">
+          {/* Email Section */}
+          <div className="flex justify-between items-center py-2">
             <span className="text-gray-400">Email</span>
             <span className="text-gray-200">{user.email ?? '—'}</span>
           </div>
-        </div>
 
-        {/* Username display or create/edit */}
-        <div className="pt-4 border-t border-gray-700">
-          {hasUsername && !isEditing ? (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="text-gray-400">Username</span>
-                <span className="text-gray-200">{profileUsername}</span>
-              </div>
-              <button
-                onClick={() => { setIsEditing(true); setMessage(null); setError(null); }}
-                className="border border-yellow-400 text-yellow-400 px-4 py-1 rounded-lg font-semibold hover:bg-yellow-400 hover:text-gray-900 transition-colors"
-              >
-                Edit
-              </button>
-            </div>
-          ) : (
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
-                {hasUsername ? 'Change username' : 'Create username'}
-              </label>
-              <div className="flex gap-3">
-                <input
-                  id="username"
-                  type="text"
-                  value={usernameInput}
-                  onChange={(e) => setUsernameInput(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-600 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                  placeholder="your_username"
-                />
+          {/* Username Section */}
+          <div className="flex justify-between items-center py-2 border-t border-gray-700 pt-4">
+            {hasUsername && !isEditing ? (
+              <>
+                <div className="flex items-center gap-3">
+                  <span className="text-gray-400">Username</span>
+                  <span className="text-gray-200">{profileUsername}</span>
+                </div>
                 <button
-                  onClick={submitUsername}
-                  disabled={saving}
-                  className="bg-yellow-400 text-gray-900 px-5 rounded-lg font-semibold hover:bg-yellow-300 transition-colors disabled:opacity-50"
+                  onClick={() => { setIsEditing(true); setMessage(null); setError(null); }}
+                  className="border border-yellow-400 text-yellow-400 px-3 py-1 rounded-lg font-semibold hover:bg-yellow-400 hover:text-gray-900 transition-colors"
                 >
-                  {hasUsername ? 'Save' : 'Create'}
+                  Edit
                 </button>
-                {hasUsername && (
+              </>
+            ) : (
+              <div className="w-full">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-gray-400">{hasUsername ? 'Change username' : 'Create username'}</span>
+                </div>
+                <div className="flex gap-3">
+                  <input
+                    id="username"
+                    type="text"
+                    value={usernameInput}
+                    onChange={(e) => setUsernameInput(e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-600 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                    placeholder="your_username"
+                  />
                   <button
-                    onClick={() => { setIsEditing(false); setUsernameInput(profileUsername ?? ''); setMessage(null); setError(null); }}
-                    className="px-5 rounded-lg font-semibold border border-gray-600 text-gray-300 hover:bg-gray-800"
+                    onClick={submitUsername}
+                    disabled={saving}
+                    className="bg-yellow-400 text-gray-900 px-5 rounded-lg font-semibold hover:bg-yellow-300 transition-colors disabled:opacity-50"
                   >
-                    Cancel
+                    {hasUsername ? 'Save' : 'Create'}
                   </button>
-                )}
+                  {hasUsername && (
+                    <button
+                      onClick={() => { setIsEditing(false); setUsernameInput(profileUsername ?? ''); setMessage(null); setError(null); }}
+                      className="px-5 rounded-lg font-semibold border border-gray-600 text-gray-300 hover:bg-gray-800"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+                <p className="mt-2 text-xs text-gray-500">3–20 chars. Letters, numbers, period, dash, underscore. Must be unique.</p>
+                {error && <p className="mt-2 text-sm text-red-400" role="alert">{error}</p>}
+                {message && <p className="mt-2 text-sm text-green-400">{message}</p>}
               </div>
-              <p className="mt-1 text-xs text-gray-500">3–20 chars. Letters, numbers, period, dash, underscore. Must be unique.</p>
-              {error && <p className="mt-2 text-sm text-red-400" role="alert">{error}</p>}
-              {message && <p className="mt-2 text-sm text-green-400">{message}</p>}
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         <div className="text-center pt-4">
@@ -165,4 +166,4 @@ export default function ProfilePage() {
       </div>
     </div>
   );
-} 
+}
