@@ -140,6 +140,9 @@ export default function CreateTopicPage() {
               onChange={(e) => handleItemCountChange(parseInt(e.target.value))}
               className="w-full px-3 py-2 border border-gray-600 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
             >
+              <option value={2}>2 items</option>
+              <option value={3}>3 items</option>
+              <option value={4}>4 items</option>
               <option value={5}>5 items</option>
               <option value={6}>6 items</option>
               <option value={7}>7 items</option>
@@ -148,7 +151,7 @@ export default function CreateTopicPage() {
               <option value={10}>10 items</option>
             </select>
             <p className="mt-1 text-sm text-gray-400">
-              Choose how many items people will rank (5-10)
+              Choose how many items people will rank (2-10)
             </p>
           </div>
 
